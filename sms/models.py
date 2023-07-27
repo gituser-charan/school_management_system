@@ -32,7 +32,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=50, blank=True)
-    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, blank=True, null=True, default=7)
+    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES)
     date_joined = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
     is_deleted = models.BooleanField(default=False)
@@ -85,7 +85,7 @@ class Students(models.Model):
     
     date_of_joining = models.DateField(null=True)
     class_name = models.ForeignKey(Clss, on_delete=models.CASCADE)
-    photo = models.ImageField(max_length=255, null=True)
+    photo = models.ImageField(max_length=255)
     
     
     
@@ -113,7 +113,7 @@ class Staff(models.Model):
     subject_details = models.IntegerField(null=True)
     class_name = models.ManyToManyField(Clss)
     class_details = models.IntegerField(null=True)
-    photo = models.ImageField(max_length=255, null=True)
+    photo = models.ImageField(max_length=255)
     def __str__(self):
         return self.name
 

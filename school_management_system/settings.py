@@ -78,7 +78,7 @@ AUTH_USER_MODEL = 'sms.CustomUser'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'school_managements_system',
+        'NAME': 'school_management_system',
         'USER' : 'root',
         'PASSWORD' : 'Root@123',
         'HOST' : '127.0.0.1',
