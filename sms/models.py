@@ -85,6 +85,7 @@ class Students(models.Model):
     
     date_of_joining = models.DateField(null=True)
     class_name = models.ForeignKey(Clss, on_delete=models.CASCADE)
+    photo = models.ImageField(max_length=255, null=True)
     
     
     
@@ -112,6 +113,7 @@ class Staff(models.Model):
     subject_details = models.IntegerField(null=True)
     class_name = models.ManyToManyField(Clss)
     class_details = models.IntegerField(null=True)
+    photo = models.ImageField(max_length=255, null=True)
     def __str__(self):
         return self.name
 
