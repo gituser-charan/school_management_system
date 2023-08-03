@@ -13,6 +13,7 @@ from .serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.contrib.auth.models import User
 from rest_framework import pagination
+from django.http import Http404
 from .permissions import CustomPermission
 from .serializers import (
     UserRegistrationSerializer,
@@ -28,6 +29,8 @@ from openpyxl import Workbook
 from django.http import HttpResponse
 from .models import *
 import csv
+from .email import*
+
 
 
     # 
@@ -59,6 +62,7 @@ class AuthUserRegistrationView(APIView):
 
         if valid:
             serializer.save()
+            email_otp(serializer.data['email'])
             status_code = status.HTTP_201_CREATED
 
             response = {
@@ -70,7 +74,30 @@ class AuthUserRegistrationView(APIView):
 
             return Response(response, status=status_code)
 
+class VerifyOtp(APIView):
+    serializer_class = VerifyAccountSerializer
+    permission_classes = (AllowAny, )
 
+    def post(self, request):
+         
+        serializer = self.serializer_class(data=request.data)
+        valid = serializer.is_valid(raise_exception=True)
+
+        if valid:
+            serializer.save()
+            
+            status_code = status.HTTP_201_CREATED
+
+            response = {
+                'success': True,
+                'statusCode': status_code,
+                'message': 'User successfully registered!',
+                'user': serializer.data
+            }
+
+            return Response(response, status=status_code) 
+              
+    
 class UserLoginView(APIView):
     serializer_class = UserLoginSerializer
     permission_classes = (AllowAny, )
@@ -120,8 +147,36 @@ class UserListView(APIView):
 
             }
             return Response(response, status=status.HTTP_200_OK)
+        
+class UserDeleteView(APIView):
+    permission_classes = (IsAuthenticated,)
+    def get_object(self, pk):
+        try:
+            return CustomUser.objects.get(pk=pk)
+        except CustomUser.DoesNotExist:
+            raise Http404
+    def delete(self, request, pk, format=None): 
+        user = self.get_object(pk)  
+        users =request.user
+        if users.role != 1:
+            response = {
+                'success': False,
+                'status_code': status.HTTP_403_FORBIDDEN,
+                'message': 'You are not authorized to perform this action'
+            }
+        else:
+            user.delete()
+            status_code = status.HTTP_200_OK
+            response = {
+                'success': True,
+                'statusCode': status_code,
+                'message': user and 'successfully deleted',
+            }
 
-   
+        return Response(response, status=status.HTTP_200_OK)
+
+    
+        
         
 class StudentsViewSets(viewsets.ModelViewSet):
     queryset=Students.objects.all()

@@ -22,6 +22,13 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         auth_user = CustomUser.objects.create_user(**validated_data)
         return auth_user
     
+class VerifyAccountSerializer(serializers.Serializer):
+    class Meta:
+        
+        
+        email = models.EmailField()
+        otp = models.CharField(max_length=4)
+
 class UserLoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(max_length=128, write_only=True)
@@ -58,7 +65,7 @@ class UserLoginSerializer(serializers.Serializer):
             }
 
             return validation
-        except AuthUser.DoesNotExist:
+        except CustomUser.DoesNotExist:
             raise serializers.ValidationError("Invalid login credentials")
         
 class UserListSerializer(serializers.ModelSerializer):
@@ -70,7 +77,9 @@ class UserListSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = '__all__'
-    
+
+
+        
         
 class SubjectSerializer(serializers.ModelSerializer):
     class Meta:

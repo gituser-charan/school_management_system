@@ -30,6 +30,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     uid = models.UUIDField(unique=True, editable=False, default=uuid.uuid4, verbose_name='Public identifier')
     email = models.EmailField(unique=True)
+    otp = models.CharField(max_length=4, null=True)
+    is_verified = models.BooleanField(default=False)
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=50, blank=True)
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES)
